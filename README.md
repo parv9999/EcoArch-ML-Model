@@ -1,200 +1,229 @@
-# ✅ Import necessary libraries
+# 🌿 EcoArch-ML-API
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import mean_absolute_error, accuracy_score
-from google.colab import files
-import os
-import joblib  # For saving and loading models
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-eco--arch--ml--api.vercel.app-brightgreen?style=for-the-badge&logo=vercel)](https://eco-arch-ml-api.vercel.app)
+![Python](https://img.shields.io/badge/Python-67.9%25-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-32.1%25-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![ML](https://img.shields.io/badge/ML-Random%20Forest-orange?style=for-the-badge&logo=scikit-learn&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-Frontend-black?style=for-the-badge&logo=next.js)
 
+> An AI-powered API that predicts **energy consumption**, **carbon footprint**, **cooling load**, and **roof type recommendations** for architectural projects — bringing machine learning to sustainable building design.
 
-# ✅ Step 1: Check if the file exists, else upload manually
+---
 
-file_path = '/mnt/data/Updated_GreenRoofData.csv'  # Use a cleaner file name
-if not os.path.exists(file_path):
-    uploaded = files.upload()
-    file_path = list(uploaded.keys())[0]
+## 🌐 Live Demo
 
+🔗 **[eco-arch-ml-api.vercel.app](https://eco-arch-ml-api.vercel.app)**
 
-# ✅ Step 2: Load dataset safely
+---
 
-df = pd.read_csv(file_path, encoding='ISO-8859-1')
+## 📋 Table of Contents
 
+- [About](#about)
+- [Features](#features)
+- [ML Models](#ml-models)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [API Endpoints](#api-endpoints)
+- [Deployment](#deployment)
+- [Author](#author)
 
-# ✅ Step 3: Display dataset info
+---
 
-print("Dataset Info:")   # SHOWS ALL 17 COLUMNS WITH 
-df.info()                # ENTERIES AND THERE DATA TYPE
+## 📖 About
 
+**EcoArch-ML-API** is a full-stack application combining a **Python ML backend** with a **Next.js frontend** to help architects and engineers make eco-conscious design decisions. By inputting building parameters, users receive ML-driven predictions on sustainability metrics.
 
-# ✅ Step 4: Handle missing values
+---
 
-df.fillna(df.select_dtypes(include=[np.number]).median(), inplace=True)
+## ✨ Features
 
+- 🔋 **Energy Consumption Prediction** — Estimate a building's energy usage
+- 🌫️ **Carbon Footprint Estimation** — Predict CO₂ emissions from building design
+- ❄️ **Cooling Load Forecasting** — Calculate cooling requirements based on design inputs
+- 🏠 **Roof Type Recommendation** — ML-based suggestion for optimal roof type
+- ⚡ **REST API** — Clean endpoints powered by Python (Flask/FastAPI)
+- 🖥️ **Interactive UI** — Next.js frontend for easy model interaction
 
-# ✅ Step 5: Fix Column Names (Removing Extra Spaces)
+---
 
-df.columns = df.columns.str.strip()
+## 🤖 ML Models
 
+All models are trained using **Random Forest** algorithms and serialized as `.pkl` files:
 
-# ✅ Step 6: Define Features (X) and Target Variables (y)
+| Model File | Predicts | Algorithm |
+|---|---|---|
+| `energy_model.pkl` | Energy consumption (kWh) | Random Forest Regressor |
+| `carbon_model.pkl` | Carbon emissions (CO₂ kg) | Random Forest Regressor |
+| `cooling_model.pkl` | Cooling load (kW) | Random Forest Regressor |
+| `roof_type_model.pkl` | Optimal roof type | Random Forest Classifier |
+| `roof_type_mapping.pkl` | Roof label encoding | Label Encoder |
 
-X = df[['roof_area (sq.m)', 'avg_temperature (°C)', 'rainfall (mm/year)',
-        'humidity (%)', 'sunlight_exposure (hours/day)', 'wind_speed (m/s)',
-        'soil_depth (cm)', 'installation_cost (  ? )', 'maintenance_cost (   ? /year)']]
+> Models evaluated using **Mean Absolute Error (MAE)** and **Accuracy Score** metrics.
 
+---
 
-# ✅ Step 7: FIX  Encode Green Roof Type for Model Training 
+## 🛠️ Tech Stack
 
-roof_type_mapping = {name: idx for idx, name in enumerate(df['green_roof_type'].unique())}
-df['green_roof_type'] = df['green_roof_type'].map(roof_type_mapping)   
+### Backend
+- **Python** — Core ML logic
+- **scikit-learn** — Random Forest models
+- **Flask / FastAPI** — REST API server
+- **pandas / numpy / seaborn** — Data processing & analysis
+- **pickle** — Model serialization
 
-# ✅ Fix: Encode categorical variable for Green Roof Type
-#    df['green_roof_type'] = df['green_roof_type'].astype('category').cat.codes
+### Frontend
+- **Next.js** — React-based frontend framework
+- **JavaScript** — Client-side interactivity
 
+### Infrastructure
+- **Vercel** — Deployment platform
 
-# 🎯 **Step 8: Train Model for Cooling Effect**
+---
 
-y_cooling = df['cooling_effect (°C reduction)']
-X_train, X_test, y_train, y_test = train_test_split(X, y_cooling, test_size=0.2, random_state=42)
-cooling_model = RandomForestRegressor(n_estimators=100, random_state=42)
-cooling_model.fit(X_train, y_train)
+## 📁 Project Structure
 
-y_pred = cooling_model.predict(X_test)
-print("Cooling Effect MAE:", mean_absolute_error(y_test, y_pred))
+```
+EcoArch-ML-API/
+│
+├── pages/                    # Next.js pages (frontend routes)
+│
+├── app.py                    # Python backend — API server & ML inference
+├── requirements.txt          # Python dependencies
+│
+├── energy_model.pkl          # Trained energy prediction model
+├── carbon_model.pkl          # Trained carbon footprint model
+├── cooling_model.pkl         # Trained cooling load model
+├── roof_type_model.pkl       # Trained roof type classifier
+├── roof_type_mapping.pkl     # Roof type label encoder
+│
+├── next.config.js            # Next.js configuration
+├── package.json              # Node.js dependencies
+└── README.md
+```
 
+---
 
-# 🎯 **Step 9: Train Model for Energy Savings**
+## 🚀 Getting Started
 
-y_energy = df['energy_savings (kWh/year)']
-X_train, X_test, y_train, y_test = train_test_split(X, y_energy, test_size=0.2, random_state=42)
-energy_model = RandomForestRegressor(n_estimators=100, random_state=42)
-energy_model.fit(X_train, y_train)
+### Prerequisites
 
-y_pred = energy_model.predict(X_test)
-print("Energy Savings MAE:", mean_absolute_error(y_test, y_pred))
+- Python 3.8+
+- Node.js 16+
+- npm or yarn
 
+### 1. Clone the Repository
 
-# 🎯 **Step 10: Train Model for Green Roof Type**
+```bash
+git clone https://github.com/parv9999/EcoArch-ML-API.git
+cd EcoArch-ML-API
+```
 
-y_roof_type = df['green_roof_type']
-X_train, X_test, y_train, y_test = train_test_split(X, y_roof_type, test_size=0.2, random_state=42)
-roof_type_model = KNeighborsClassifier(n_neighbors=5)
-roof_type_model.fit(X_train, y_train)
+### 2. Set Up the Python Backend
 
-y_pred = roof_type_model.predict(X_test)
-print("Roof Type Prediction Accuracy:", accuracy_score(y_test, y_pred))
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
 
+# Start the backend server
+python app.py
+```
 
-# 🎯 **Step 11: Train Model for Carbon Sequestration**
+### 3. Set Up the Next.js Frontend
 
-y_carbon = df['carbon_sequestration (kg/year)']
-X_train, X_test, y_train, y_test = train_test_split(X, y_carbon, test_size=0.2, random_state=42)
-carbon_model = RandomForestRegressor(n_estimators=100, random_state=42)
-carbon_model.fit(X_train, y_train)
+```bash
+# Install Node dependencies
+npm install
 
-y_pred = carbon_model.predict(X_test)
-print("Carbon Sequestration MAE:", mean_absolute_error(y_test, y_pred))
+# Run the development server
+npm run dev
+```
 
+Visit `http://localhost:3000` in your browser.
 
-# ✅ Step 12: Save the Trained Models
+---
 
-joblib.dump(cooling_model, "cooling_model.pkl")
-joblib.dump(energy_model, "energy_model.pkl")
-joblib.dump(roof_type_model, "roof_type_model.pkl")
-joblib.dump(carbon_model, "carbon_model.pkl")
-joblib.dump(roof_type_mapping, "roof_type_mapping.pkl")
-print("✅ All models saved successfully!")
+## 📡 API Endpoints
 
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/predict/energy` | Predict energy consumption |
+| `POST` | `/predict/carbon` | Predict carbon footprint |
+| `POST` | `/predict/cooling` | Predict cooling load |
+| `POST` | `/predict/roof` | Recommend roof type |
 
-# ✅ Step 13: Load the Saved Models for Prediction
+### Example Request
 
-cooling_model = joblib.load("cooling_model.pkl")
-energy_model = joblib.load("energy_model.pkl")
-roof_type_model = joblib.load("roof_type_model.pkl")
-carbon_model = joblib.load("carbon_model.pkl")
-roof_type_mapping = joblib.load("roof_type_mapping.pkl")
-print("✅ Models loaded successfully!")
+```json
+POST /predict/energy
+{
+  "building_area": 2500,
+  "floors": 4,
+  "orientation": "south",
+  "glazing_ratio": 0.4,
+  "insulation_thickness": 0.15
+}
+```
 
+### Example Response
 
-# Download to local system
-from google.colab import files
-files.download("cooling_model.pkl")
-files.download("energy_model.pkl")
-files.download("roof_type_model.pkl")
-files.download("carbon_model.pkl")
-files.download("roof_type_mapping.pkl")
+```json
+{
+  "predicted_energy_kwh": 48320.5,
+  "model": "energy_model",
+  "status": "success"
+}
+```
 
+---
 
-# ✅ Step 14: New Data for Prediction (Ensure Correct Column Names & Types)
+## ☁️ Deployment
 
-new_data = pd.DataFrame([[100 , 30.5 , 1200 , 75 , 6.5 ,  3.2 ,  15 , 50000 , 2000 ]], columns=X.columns)
+This project is deployed on **Vercel** with 18+ deployments.
 
-# 🎯 **Step 15: Make Predictions**
+To deploy your own instance:
 
-effect = cooling_model.predict(new_data)
-energy = energy_model.predict(new_data)
-predicted_roof_type_idx = roof_type_model.predict(new_data)[0]
-predicted_roof_type = list(roof_type_mapping.keys())[list(roof_type_mapping.values()).index(predicted_roof_type_idx)]
-carbon = carbon_model.predict(new_data)
+```bash
+# Install Vercel CLI
+npm install -g vercel
 
+# Deploy
+vercel
+```
 
-# 📌 Step 16: Print Predictions
+> **Note:** Ensure your Python backend is separately hosted (e.g., on Railway, Render, or AWS) and update the API base URL in the frontend config.
 
-print("\n📊 **Predictions for New Data**:")
-print("Predicted Cooling Effect:", effect[0], "°C reduction")
-print("Predicted Energy Savings:", energy[0], "kWh/year")
-print("Recommended Green Roof Type:", predicted_roof_type)  # Mapped to category name
-print("Predicted Carbon Sequestration:", carbon[0], "kg/year")
+---
 
+## 📦 Requirements
 
+Key Python dependencies (`requirements.txt`):
 
+```
+scikit-learn
+pandas
+numpy
+seaborn
+flask
+pickle-mixin
+jupyter_client
+```
 
+---
 
+## 👤 Author
 
-####-----------------------------------------------------------------------####
+**parv9999**
 
-#cat.codes
-#Assigns a unique numerical code to each category.
+- GitHub: [@parv9999](https://github.com/parv9999)
+- Live Site: [eco-arch-ml-api.vercel.app](https://eco-arch-ml-api.vercel.app)
 
-#Example conversion:
+---
 
-#Intensive Green Roof   → 0  
-#Extensive Green Roof   → 1  
-#Semi-Intensive Green Roof  → 2 
+## 📝 License
 
-#🔹 Why is this used?
-#1.Machine learning models cannot work with categorical text values directly.
-#2.Encoding converts these text values into numerical form so they can be used 
-#as input features.
+This project is open source and available for educational and research use.
 
+---
 
-#--------------------------------------------------------------------------####
-
-#                               {{  either use those 2 line below all traing
-# ✅ Step 12: Evaluate Models    all training modal or these two step for
-#                                 MAE %accuracy calucalation   }}
-
-#cooling_mae = mean_absolute_error(y_test, cooling_model.predict(X_test))
-#energy_mae = mean_absolute_error(y_test, energy_model.predict(X_test))
-#carbon_mae = mean_absolute_error(y_test, carbon_model.predict(X_test))
-#roof_type_accuracy = accuracy_score(y_test, roof_type_model.predict(X_test))
-
-# 📌 Step 16: Print Model Evaluation Metrics
-#print("\n📊 **Model Evaluation Metrics**:")
-#print(f"Cooling Effect MAE: {cooling_mae:.4f}")
-#print(f"Energy Savings MAE: {energy_mae:.4f}")
-#print(f"Roof Type Prediction Accuracy: {roof_type_accuracy:.4f}")
-#print(f"Carbon Sequestration MAE: {carbon_mae:.4f}")
-
-#---------------------------------------------------------------------------###
-
-
-
-
-
+<p align="center">🌱 Building a greener future with Machine Learning & Architecture</p>
